@@ -19,6 +19,14 @@ export default function Game() {
   const [gameOver, setGameOver] = useState(null); // { winner, winningCells, isDraw }
   const [loading, setLoading] = useState(true);
   const [socketError, setSocketError] = useState('');
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  function handleExit() {
+    sessionStorage.removeItem('roomCode');
+    sessionStorage.removeItem('playerSlot');
+    socket.disconnect();
+    navigate('/lobby');
+  }
 
   // Determine player slot from session
   useEffect(() => {
@@ -164,6 +172,15 @@ export default function Game() {
           <div className="flex items-center gap-2">
             <span className="text-slate-600 text-xs font-body">Room:</span>
             <span className="font-display text-sm text-purple-400">{roomCode}</span>
+            <motion.button
+              onClick={() => setShowExitConfirm(true)}
+              className="ml-2 w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+              style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#f87171' }}
+              whileTap={{ scale: 0.92 }}
+              title="Exit game"
+            >
+              ✕
+            </motion.button>
           </div>
         </div>
 
@@ -222,6 +239,45 @@ export default function Game() {
           isDraw={gameOver.isDraw}
           playerSlot={playerSlot}
         />
+      )}
+
+      {/* Exit confirmation modal */}
+      {showExitConfirm && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{ background: 'rgba(7,8,15,0.7)' }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.div
+            className="glass-card p-6 max-w-sm w-full text-center"
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+          >
+            <h3 className="font-display text-xl font-bold text-white mb-2">Leave Game?</h3>
+            <p className="text-slate-400 text-sm font-body mb-6">
+              You'll leave the room and your opponent will be notified. Scores for this room will be lost.
+            </p>
+            <div className="flex gap-3">
+              <motion.button
+                onClick={() => setShowExitConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl font-semibold font-body"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0' }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                onClick={handleExit}
+                className="flex-1 py-2.5 rounded-xl font-semibold font-body"
+                style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171' }}
+                whileTap={{ scale: 0.97 }}
+              >
+                Exit
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );

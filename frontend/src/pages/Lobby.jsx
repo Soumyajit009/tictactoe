@@ -1,3 +1,4 @@
+import socket from '../utils/socket';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,26 @@ export default function Lobby() {
     }
     initRoom();
   }, []);
+
+  useEffect(() => {
+  if (!roomCode) return;
+
+  socket.connect();
+  socket.emit('join_room', { roomCode, playerSlot: 'person1' });
+
+  function onPlayerStatus({ person2Connected }) {
+    if (person2Connected) {
+      navigate(`/game/${roomCode}`);
+    }
+  }
+
+  socket.on('player_status', onPlayerStatus);
+
+  return () => {
+    socket.off('player_status', onPlayerStatus);
+    socket.disconnect();
+  };
+}, [roomCode, navigate]);
 
   async function initRoom() {
     try {

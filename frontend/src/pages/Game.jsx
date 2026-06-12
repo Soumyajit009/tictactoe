@@ -268,12 +268,12 @@ export default function Game() {
                 Cancel
               </motion.button>
               <motion.button
-                onClick={handleExit}
-                className="flex-1 py-2.5 rounded-xl font-semibold font-body"
-                style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171' }}
-                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowExitConfirm(true)}
+                className="ml-2 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold font-heading"
+                style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171' }}
+                whileTap={{ scale: 0.95 }}
               >
-                Exit
+                EXIT
               </motion.button>
             </div>
           </motion.div>
